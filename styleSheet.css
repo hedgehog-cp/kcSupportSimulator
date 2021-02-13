@@ -1,0 +1,145 @@
+/*** <input> id=output全般 ***/
+input[id*="output-"] {
+    border: solid 0px;
+    text-align: center;
+    padding-left: 16px;
+    height: 20px;
+    font-size: 16px;
+}
+input[id*="output-"]:focus {
+    outline: none;
+    border-bottom: solid 1px;
+}
+input[id*="output-"]:hover {
+    background-color: rgb(189, 255, 254);
+}
+
+/*** myfleet ***/
+.myfleet {
+    border: solid 1px;
+    float: left;
+}
+.myfleet th:first-child {
+    text-align: center;
+}
+/*** <input> '基本攻撃力' ***/
+input[id*="output-ship-basicfp-"] {
+    border: solid 0px;
+    width: 72px;
+}
+/*** <input> '命中項' ***/
+input[id*="output-ship-acc-"] {
+    border: solid 0px;
+    width: 60px;
+}
+
+/*** enemyfleet ***/
+.enemyfleet {
+    border: solid 1px;
+    float: left;
+}
+.enemyfleet th:first-child {
+    text-align: center;
+}
+/*** '撃沈率(5)', '大破率(6)', ''中破率(7), '平均残耐久(8)' ***/
+.enemyfleet tr th:nth-child(5){
+    padding: 0 10px;
+}
+.enemyfleet tr td:nth-child(5){
+    padding-right: 10px;
+    text-align: right;
+}
+.enemyfleet tr th:nth-child(6){
+    padding: 0 10px;
+}
+.enemyfleet tr td:nth-child(6){
+    padding-right: 10px;
+    text-align: right;
+}
+.enemyfleet tr th:nth-child(7){
+    padding: 0 10px;
+}
+.enemyfleet tr td:nth-child(7){
+    padding-right: 10px;
+    text-align: right;
+}
+.enemyfleet tr th:nth-child(8){
+    padding: 0 10px;
+}
+.enemyfleet tr td:nth-child(8){
+    padding-right: 10px;
+    text-align: right;
+}
+/*** <input> '耐久', '装甲', '回避項' ***/
+input[id*="output-enemy-"] {
+    border: solid 0px;
+    width: 54px;
+}
+
+
+/*** 交戦形態補正 ***/
+.engagement-form-out {   
+    float: left;
+    width: 160px;
+    height: 114px;
+    font-weight: bold;
+    margin-left: 100px;
+    border: solid 1px;
+}
+.engagement-form-in {
+    font-family: monospace;
+    font-weight: normal;
+    border: solid 0px;
+    width: 158px;
+    height: 88px;
+}
+.engagement-form-in input {
+    text-align: center;
+    border: solid 0px;
+    font-size: 16px;
+    height: 20px;
+    width: 48px;
+}
+.engagement-form-in input:focus {
+    outline: none;
+}
+.engagement-form-in input:hover {
+    background-color: rgb(189, 255, 254);
+}
+
+/*** キラ付け ***/
+.condition {
+    margin-top: 40px;
+}
+
+/*** n隻撃沈率 ***/
+td[id*="output-sunk-num-proba-"] {
+    padding-left: 16px;
+    text-align: right;
+}
+.output-sunk-num {
+    padding-left: 16px;
+    text-align: right;
+}
+/*** パラメータ設定 ***/
+.set-param input {
+    border: solid 0px;
+    text-align: center;
+    padding-left: 8px;
+    width: 54px;
+    height: 20px;
+    font-size: 16px;
+    font-style: italic;
+}
+.set-param-underline {
+    border-bottom: solid violet 1px ;
+}
+
+/*** その他 ***/
+.accRed {
+    color: red;
+}
+.aglBlue {
+    color: blue;
+}
+

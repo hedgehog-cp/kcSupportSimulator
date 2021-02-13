@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>index</title>
+        <link rel="stylesheet" href="styleSheet.css">
+        <script type="text/javascript" src="data.js"></script>
+        <script type="text/javascript" src="basicFp.js"></script>
+        <script type="text/javascript" src="accuracy.js"></script>
+        <script type="text/javascript" src="getMyFleet.js"></script>
+        <script type="text/javascript" src="getEnemyFleet.js"></script>
+        <script type="text/javascript" src="calcDamage.js"></script>
+    </head>
+    <body>
+        <h3>
+            砲撃支援シミュレータ
+        </h3>
+        <p>
+            <input type="text" value="" id="input-my-fleet-json" placeholder='[{"f1":{"s1":{"id":...}}}]'>
+            <input type="button" value="myfleet" onclick="getMyFleet()">          
+        </p>
+        <table class="myfleet">
+            <tr style="border: solid 1px;">
+                <th>自艦隊</th>
+                <th>基本攻撃力</th>
+                <th class="accRed">命中項</th>
+            </tr>
+            <tr>
+                <td id="output-ship-name-0"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-0"></td>
+                <td><input type="number" value="" id='output-ship-acc-0'></td>
+            </tr>
+            <tr>
+                <td id="output-ship-name-1"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-1"></td>
+                <td><input type="number" value="" id='output-ship-acc-1'></td>
+            </tr>
+            <tr>
+                <td id="output-ship-name-2"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-2"></td>
+                <td><input type="number" value="" id='output-ship-acc-2'></td>
+            </tr>
+            <tr>
+                <td id="output-ship-name-3"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-3"></td>
+                <td><input type="number" value="" id='output-ship-acc-3'></td>
+            </tr>
+            <tr>
+                <td id="output-ship-name-4"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-4"></td>
+                <td><input type="number" value="" id='output-ship-acc-4'></td>
+            </tr>
+            <tr>
+                <td id="output-ship-name-5"></td>
+                <td><input type="number" value="" id="output-ship-basicfp-5"></td>
+                <td><input type="number" value="" id='output-ship-acc-5'></td>
+            </tr>
+        </table>
+        <div class="engagement-form-out">
+            <span id="alertSum100">&nbsp;交戦形態補正</span>
+            <div class="engagement-form-in">
+                <div>
+                    &nbsp;T字有利:
+                    <input type="number" value="15" min="0" max="100" step="1" id="EF0" onblur="alertSum100()">
+                    [%]
+                </div>
+                <div>
+                    &nbsp;同航戦&nbsp;:
+                    <input type="number" value="45" min="0" max="100" step="1" id="EF1" onblur="alertSum100()">
+                    [%]
+                </div>
+                <div>
+                    &nbsp;反航戦&nbsp;:
+                    <input type="number" value="30" min="0" max="100" step="1" id="EF2" onblur="alertSum100()">
+                    [%]
+                </div>
+                <div>
+                    &nbsp;T字不利:
+                    <input type="number" value="10" min="0" max="100" step="1" id="EF3" onblur="alertSum100()">
+                    [%]
+                </div>
+            </div>
+            <div class="condition">
+                攻撃側キラ補正
+                <input id="condition-bonus" type="checkbox" checked onclick="switchCondBonus()">
+            </div>
+        </div>        
+        <div style="clear: both; height: 50px;"></div>
+        <p>
+            <input type="text" value="" id="input-enemy-fleet-json" placeholder='[{"f1":{"s1":{"id":...}}}]'>
+            <input type="button" value="enemyfleet" onclick="getEnemyFleet()">  
+        </p>
+        <table class="enemyfleet">
+            <tr>
+                <th>敵艦隊</th>
+                <th>耐久</th>
+                <th>装甲</th>
+                <th class="aglBlue">回避項</th>
+                <th>撃沈率</th>
+                <th>大破率</th>
+                <th>中破率</th>
+                <th>平均残耐久</th>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-0"></td>
+                <td><input type="number" value="" id="output-enemy-hp-0"></td>
+                <td><input type="number" value="" id="output-enemy-armor-0"></td>
+                <td><input type="number" value="" id="output-enemy-agl-0"></td>
+                <td id="output-enemy-sunk-0"></td>
+                <td id="output-enemy-taiha-0"></td>
+                <td id="output-enemy-tyuuha-0"></td>
+                <td id="output-enemy-avedmg-0"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-1"></td>
+                <td><input type="number" value="" id="output-enemy-hp-1"></td>
+                <td><input type="number" value="" id="output-enemy-armor-1"></td>
+                <td><input type="number" value="" id="output-enemy-agl-1"></td>
+                <td id="output-enemy-sunk-1"></td>
+                <td id="output-enemy-taiha-1"></td>
+                <td id="output-enemy-tyuuha-1"></td>
+                <td id="output-enemy-avedmg-1"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-2"></td>
+                <td><input type="number" value="" id="output-enemy-hp-2"></td>
+                <td><input type="number" value="" id="output-enemy-armor-2"></td>
+                <td><input type="number" value="" id="output-enemy-agl-2"></td>
+                <td id="output-enemy-sunk-2"></td>
+                <td id="output-enemy-taiha-2"></td>
+                <td id="output-enemy-tyuuha-2"></td>
+                <td id="output-enemy-avedmg-2"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-3"></td>
+                <td><input type="number" value="" id="output-enemy-hp-3"></td>
+                <td><input type="number" value="" id="output-enemy-armor-3"></td>
+                <td><input type="number" value="" id="output-enemy-agl-3"></td>
+                <td id="output-enemy-sunk-3"></td>
+                <td id="output-enemy-taiha-3"></td>
+                <td id="output-enemy-tyuuha-3"></td>
+                <td id="output-enemy-avedmg-3"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-4"></td>
+                <td><input type="number" value="" id="output-enemy-hp-4"></td>
+                <td><input type="number" value="" id="output-enemy-armor-4"></td>
+                <td><input type="number" value="" id="output-enemy-agl-4"></td>
+                <td id="output-enemy-sunk-4"></td>
+                <td id="output-enemy-taiha-4"></td>
+                <td id="output-enemy-tyuuha-4"></td>
+                <td id="output-enemy-avedmg-4"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-5"></td>
+                <td><input type="number" value="" id="output-enemy-hp-5"></td>
+                <td><input type="number" value="" id="output-enemy-armor-5"></td>
+                <td><input type="number" value="" id="output-enemy-agl-5"></td>
+                <td id="output-enemy-sunk-5"></td>
+                <td id="output-enemy-taiha-5"></td>
+                <td id="output-enemy-tyuuha-5"></td>
+                <td id="output-enemy-avedmg-5"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-6"></td>
+                <td><input type="number" value="" id="output-enemy-hp-6"></td>
+                <td><input type="number" value="" id="output-enemy-armor-6"></td>
+                <td><input type="number" value="" id="output-enemy-agl-6"></td>
+                <td id="output-enemy-sunk-6"></td>
+                <td id="output-enemy-taiha-6"></td>
+                <td id="output-enemy-tyuuha-6"></td>
+                <td id="output-enemy-avedmg-6"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-7"></td>
+                <td><input type="number" value="" id="output-enemy-hp-7"></td>
+                <td><input type="number" value="" id="output-enemy-armor-7"></td>
+                <td><input type="number" value="" id="output-enemy-agl-7"></td>
+                <td id="output-enemy-sunk-7"></td>
+                <td id="output-enemy-taiha-7"></td>
+                <td id="output-enemy-tyuuha-7"></td>
+                <td id="output-enemy-avedmg-7"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-8"></td>
+                <td><input type="number" value="" id="output-enemy-hp-8"></td>
+                <td><input type="number" value="" id="output-enemy-armor-8"></td>
+                <td><input type="number" value="" id="output-enemy-agl-8"></td>
+                <td id="output-enemy-sunk-8"></td>
+                <td id="output-enemy-taiha-8"></td>
+                <td id="output-enemy-tyuuha-8"></td>
+                <td id="output-enemy-avedmg-8"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-9"></td>
+                <td><input type="number" value="" id="output-enemy-hp-9"></td>
+                <td><input type="number" value="" id="output-enemy-armor-9"></td>
+                <td><input type="number" value="" id="output-enemy-agl-9"></td>
+                <td id="output-enemy-sunk-9"></td>
+                <td id="output-enemy-taiha-9"></td>
+                <td id="output-enemy-tyuuha-9"></td>
+                <td id="output-enemy-avedmg-9"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-10"></td>
+                <td><input type="number" value="" id="output-enemy-hp-10"></td>
+                <td><input type="number" value="" id="output-enemy-armor-10"></td>
+                <td><input type="number" value="" id="output-enemy-agl-10"></td>
+                <td id="output-enemy-sunk-10"></td>
+                <td id="output-enemy-taiha-10"></td>
+                <td id="output-enemy-tyuuha-10"></td>
+                <td id="output-enemy-avedmg-10"></td>
+            </tr>
+            <tr>
+                <td id="output-enemy-name-11"></td>
+                <td><input type="number" value="" id="output-enemy-hp-11"></td>
+                <td><input type="number" value="" id="output-enemy-armor-11"></td>
+                <td><input type="number" value="" id="output-enemy-agl-11"></td>
+                <td id="output-enemy-sunk-11"></td>
+                <td id="output-enemy-taiha-11"></td>
+                <td id="output-enemy-tyuuha-11"></td>
+                <td id="output-enemy-avedmg-11"></td>
+            </tr>
+        </table>
+        <div style="float: left;">
+            <table>
+                <tr>
+                    <th>n隻</th>
+                    <th>撃沈率</th>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">12:</td>
+                    <td id="output-sunk-num-proba-12"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">11:</td>
+                    <td id="output-sunk-num-proba-11"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">10:</td>
+                    <td id="output-sunk-num-proba-10"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">9:</td>
+                    <td id="output-sunk-num-proba-9"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">8:</td>
+                    <td id="output-sunk-num-proba-8"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">7:</td>
+                    <td id="output-sunk-num-proba-7"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">6:</td>
+                    <td id="output-sunk-num-proba-6"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">5:</td>
+                    <td id="output-sunk-num-proba-5"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">4:</td>
+                    <td id="output-sunk-num-proba-4"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">3:</td>
+                    <td id="output-sunk-num-proba-3"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">2:</td>
+                    <td id="output-sunk-num-proba-2"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">1:</td>
+                    <td id="output-sunk-num-proba-1"></td>
+                </tr>
+                <tr>
+                    <td class="output-sunk-num">0:</td>
+                    <td id="output-sunk-num-proba-0"></td>
+                </tr>
+            </table>
+                
+            </ul>
+        </div>
+
+
+        <div style="clear: both; height: 50px;"></div>
+        <h3>シミュレーションする</h3>
+        <p>
+            <input type="number" min="0" max="1000000" step="5000" id="input-simulation-num" placeholder="simulation number" style="width: 169px;">
+            <input type="button" value="simulation" onclick="calc()">
+        </p>
+        <h3>パラメータ設定</h3>
+        <p class="set-param">
+            最終命中率 = cap(<span class="accRed">命中項</span> - <span class="aglBlue">回避項</span>) + 1 [%]
+            <br>
+            <span class="accRed">命中項</span> = int(int(<span class="set-param-underline">命中定数{<input type="number" value="64" id="accuracy-const" onblur="fixAcc()">}</span> + 2 * sqrt(レベル) + 1.5 * sqrt(運) + Σ装備命中) * 攻撃側キラ補正 * <span class="set-param-underline">攻撃側陣形補正{<input type="number" value="1" step="0.1" id="formation-acc-bonus" onblur="fixAcc()">}</span>)
+            <br>
+            <span class="aglBlue">回避項</span> = cap(int(<span class="set-param-underline">防御側陣形補正{<input type="number" value="1" step="0.1" id="formation-agl-bonus" onblur="fixAgl()">}</span> * 敵艦船固有値))
+            <br>
+            <span class="set-param-underline">第1艦隊旗艦庇われ率 = {<input type="number" value="0.45" step="0.05" id="kabaware">}</span>
+            <br>
+            <span class="set-param-underline">攻撃側陣形補正(火力) = {<input type="number" value="1" step="0.1" id="formation-attack-bonus">}</span>
+        </p>
+    </body>
+</html>
