@@ -1,5 +1,6 @@
 # kcSupportSimulator
 艦これ砲撃支援シミュレーター
+https://hedgehog-cp.github.io/kcSupportSimulator/
 
 ## 注意
 デッキビルダー形式のJSONを用いることで艦隊情報を一括入力できます。  
