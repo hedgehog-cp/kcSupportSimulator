@@ -17,6 +17,11 @@ function simulator() {
         return -1;
     }
 
+    // パラメータ更新
+    fixCommonParameter();
+    fixAccParameter();
+    fixEvasionParameter();
+
     // 艦隊情報を取得する
     let fleetLength = [];
     fleetLength = getFleetFromDocument();
