@@ -136,9 +136,13 @@ function simulator() {
             }
         }
     }
+    /**@type {Number} 平均撃沈数*/
+    let sumproductSunk = 0;
     for (let i = 0; i <= 2 * FLEET_SIZE; i++) {
         document.getElementById('output-sunk-num-proba-' + i).innerHTML = myRound(nSunk[i] / SIMULATION_NUM * 100) + '%';
+        sumproductSunk += nSunk[i] * i;
     }
+    document.getElementById('output-sumproduct').innerHTML = '平均撃沈数: ' + myRound(sumproductSunk / SIMULATION_NUM);
 
 
 
