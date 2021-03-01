@@ -107,7 +107,7 @@ function getEFBonus(proba) {
  * @returns {Number} 最終攻撃力
  */
 function getFinalFp(fp, cl) {
-    const cap = 150;
+    const cap = 170;
     let cappedFp;
     let finalFp;
 
