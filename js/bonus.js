@@ -86,12 +86,12 @@ function getBonusFp(ship) {
 
     /**
      * その装備種を装備しているか
-     * @param {'surface'|'air'|'ReSea'|'SeaBom'|'SeaBomJp'} kind 水上電探|対空電探|水上偵察機|水上爆撃機|水上爆撃機日本機
+     * @param {'surface'|'air'|'ReSea'|'SeaBom'|'SeaBomJp'|'AAA'} kind 水上電探|対空電探|水上偵察機|水上爆撃機|水上爆撃機日本機|対空機銃
      * @returns {boolean} t/f
      */
     function isHaveX(kind) {
-        const kindList = ['surface', 'air', 'ReSea', 'SeaBom', 'SeaBomJp'];
-        const equipList = [SURFACE_RADAR, AIR_RADAR, RECONNAISSANCE_SEAPLANE, SEAPLANE_BOMBER, SEAPLANE_BOMBER_JAPAN];
+        const kindList = ['surface', 'air', 'ReSea', 'SeaBom', 'SeaBomJp', 'AAA', 'AAA25mm'];
+        const equipList = [SURFACE_RADAR, AIR_RADAR, RECONNAISSANCE_SEAPLANE, SEAPLANE_BOMBER, SEAPLANE_BOMBER_JAPAN, ANTI_AIR_AUTOCANNON];
         let equip = equipList[kindList.indexOf(kind)];
     
         for (let i = 0; i < ship.itemId.length; i++) {
@@ -116,6 +116,20 @@ function getBonusFp(ship) {
             }
         }
         return false;
+    }
+
+    // 10cm連装高角砲=3
+    if (num = itemNum(3)) {
+        if (SHIP_CLASS === '秋月型') {
+            bonusFp += 2 * num;
+        }
+    }
+
+    // 15.5cm三連装砲=5
+    if (num = itemNum(5)) {
+        if (['大淀型', '最上型'].includes(SHIP_CLASS)) {
+            bonusFp += num;
+        }
     }
 
     // 流星=18
@@ -192,6 +206,13 @@ function getBonusFp(ship) {
         }
     }
 
+    // 8cm高角砲=66
+    if (num = itemNum(66)) {
+        if (/最上改二/.test(SHIP_NAME)) {
+            bonusFp += num;
+        }
+    }
+
     // 瑞雲(六三四空)=79
     // 瑞雲12型(六三四空)=81
     if (num = itemNum(79) + itemNum(81)) {
@@ -260,8 +281,39 @@ function getBonusFp(ship) {
         // (沖波改二, 秋雲改二)については, 全ての対空電探に補正があるため別で扱う
         if (['潮改二', '時雨改二', '初霜改二', '榛名改二', '長門改二'].includes(SHIP_NAME)) {
             bonusFp += num;
+        } else if (/矢矧改二/.test(SHIP_NAME)) {
+            bonusFp += 1;
         }
     }
+
+    // Ar196改=115
+    if (itemNum(115)) {
+        rfs = itemRfs(115);
+        if (['ビスマルク', 'プリンツ・オイゲン'].includes(SHIP_YOMI)) {
+            for (let i = 0; i < rfs.length; i++) {
+                if (0 <= rfs[i] && rfs[i] <= 9) {
+                    bonusFp += 2;
+                } else if (rfs[i] >= 10) {
+                    bonusFp += 3;
+                }
+            }
+        }
+    }
+
+    // 紫雲=118
+    if (itemNum(118)) {
+        rfs = itemRfs(118);
+        if (SHIP_YOMI === 'おおよど') {
+            for (let i = 0; i < rfs.length; i++) {
+                if (0 <= rfs[i] && rfs[i] <= 9) {
+                    bonusFp += 1;
+                } else if (rfs[i] >= 10) {
+                    bonusFp += 3;
+                }
+            }
+        }
+    }
+
 
     // 14cm連装砲=119
     if (num = itemNum(119)) {
@@ -274,7 +326,7 @@ function getBonusFp(ship) {
 
     // 15.2cm連装砲改=139
     if (num = itemNum(139)) {
-        if (SHIP_NAME === '能代改二') {
+        if (['能代改二', '矢矧改二'].includes(SHIP_NAME)) {
             bonusFp += 2 * num;
         }
     }
@@ -371,10 +423,10 @@ function getBonusFp(ship) {
         }
     }
 
-    // 8cm高角砲改+増設機銃=220
-    if (num = itemNum(220)) {
-        if (SHIP_NAME === '能代改二') {
-            bonusFp += num;
+    // 強風改=217
+    if (itemNum(217)) {
+        if (/最上改二/.test(SHIP_NAME)) {
+            bonusFp += 1;
         }
     }
 
@@ -387,12 +439,38 @@ function getBonusFp(ship) {
         }
     }
 
+    // Swordfish=242
+    if (num = itemNum(242)) {
+        if (SHIP_YOMI === 'アークロイヤル') {
+            bonusFp += 2 * num;
+        } else if (SHIP_YOMI === 'ほうしょう') {
+            bonusFp += num;
+        }
+    }
+
+    // Swordfish Mk.II(熟練)=243
+    if (num = itemNum(243)) {
+        if (SHIP_YOMI === 'アークロイヤル') {
+            bonusFp += 3 * num;
+        } else if (SHIP_YOMI === 'ほうしょう') {
+            bonusFp += 2 * num;
+        }
+    }
+
+    // Swordfish Mk.III(熟練)=244
+    if (num = itemNum(244)) {
+        if (SHIP_YOMI === 'アークロイヤル') {
+            bonusFp += 4 * num;
+        } else if (SHIP_YOMI === 'ほうしょう') {
+            bonusFp += 3 * num;
+        }
+    }
+
     // SK+SG レーダー=279
     if (itemNum(279)) {
         let rfMax = itemRfs(279).reduce(function(a, b) {
             return Math.max(a, b);
         });
-
         if (isIn(SHIP_YOMI, [US_SHIPS.BB, US_SHIPS.CV, US_SHIPS.AC, US_SHIPS.CL])) {
             if (rfMax >= 10) {
                 bonusFp += 2;
@@ -1042,6 +1120,57 @@ function getBonusFp(ship) {
         }
     }
 
+    // 装甲艇(AB艇)=408
+    if (num = itemNum(408)) {
+        if (SHIP_TYPE === 'しんしゅうまる') {
+            bonusFp += 2 * num;
+        } else if (SHIP_YOMI === 'あきつまる' || SHIP_TYPE === '駆逐艦') {
+            bonusFp += num;
+        }
+    }
+
+    // 武装大発=409
+    if (num = itemNum(409)) {
+        if (SHIP_TYPE === 'しんしゅうまる') {
+            bonusFp += 2 * num;
+        } else if (SHIP_YOMI === 'あきつまる') {
+            bonusFp += num;
+        }
+    }
+
+    // 21号対空電探改二=410
+    if (itemNum(410)) {
+        if (SHIP_CLASS === '秋月型' || /最上改二/.test(SHIP_NAME)) {
+            bonusFp += 1;
+        }
+    }
+
+    // 42号対空電探改二=411
+    if (itemNum(411)) {
+        rfs = itemRfs(411);
+        if (['榛名改二', '扶桑改二', '山城改二'].includes(SHIP_NAME)) {
+            for (let i = 0; i < rfs.length; i++) {
+                if (0 <= rfs[i] && rfs[i] <= 3) {
+                    bonusFp += 3;
+                } else if (4 <= rfs[i] && rfs[i] <= 9) {
+                    bonusFp += 4;
+                } else if (rfs[i] >= 10) {
+                    bonusFp += 5;
+                }
+            }
+        } else if (['長門改二', '陸奥改二', '伊勢改二', '日向改二'].includes(SHIP_NAME)) {
+            for (let i = 0; i < rfs.length; i++) {
+                if (0 <= rfs[i] && rfs[i] <= 3) {
+                    bonusFp += 2;
+                } else if (4 <= rfs[i] && rfs[i] <= 9) {
+                    bonusFp += 3;
+                } else if (rfs[i] >= 10) {
+                    bonusFp += 4;
+                }
+            }
+        }
+    }
+
     // 対空電探
     if (isHaveX('air')) {
         if (['沖波改二', '秋雲改二'].includes(SHIP_NAME)) {
@@ -1051,8 +1180,17 @@ function getBonusFp(ship) {
 
     // 水上偵察機
     if (isHaveX('ReSea')) {
-        if (SHIP_NAME === '能代改二') {
+        if (SHIP_CLASS === '阿賀野型' && /改二/.test(SHIP_NAME)) {
             bonusFp += 2;
+        } else if (/最上改二/.test(SHIP_NAME)) {
+            bonusFp += 2;
+        }
+    }
+
+    // 25mm系機銃
+    if (num = itemNum(39) + itemNum(40) + itemNum(49) + itemNum(131)) {
+        if (SHIP_CLASS === '香取型') {
+            bonusFp += num;
         }
     }
 
@@ -1064,8 +1202,7 @@ function getBonusFp(ship) {
 
     // 水上爆撃機
     if (isHaveX('SeaBom')) {
-        // 能代改二=662
-        if (SHIP_NAME === '能代改二') {
+        if ((SHIP_CLASS === '阿賀野型' && /改二/.test(SHIP_NAME)) || /最上改二/.test(SHIP_NAME)) {
             bonusFp += 1;
             // 弱日水爆
             bonusFp += isHaveX('SeaBomJp') ? 2 : 0;
@@ -1076,90 +1213,19 @@ function getBonusFp(ship) {
         }
     }
 
-    // 瑞雲(六三四空/熟練)=237
-    if (num = itemNum(237)) {
-        if (SHIP_CLASS === '扶桑型' && /改/.test(SHIP_NAME)) {
-            bonusFp += 2 * num;
-        } else if (SHIP_CLASS === '伊勢型') {
-            if (/改$/.test(SHIP_NAME)) {
-                bonusFp += 3 * num;
-            } else if (/改二/.test(SHIP_NAME)) {
-                bonusFp += 4 * num;
-            }
-        }
-    }
-
-    // 瑞雲改二(六三四空)=322
-    if (num = itemNum(322)) {
-        if (['伊勢改二', '日向改二'].includes(SHIP_NAME)) {
-            bonusFp += 5 * num;
-        }
-    }
-
-    // 瑞雲改二(六三四空/熟練)=323
-    if (num = itemNum(323)) {
-        if (['伊勢改二', '日向改二'].includes(SHIP_NAME)) {
-            bonusFp += 6 * num;
-        }
-    }
-
-    // 12.7cm連装砲A型改二=294
-    if (num = itemNum(294)) {
-        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS)) {
-            bonusFp += num;
-            bonusFp += isHaveX('surface') ? 3 : 0;          
-            bonusFp += Math.min(itemNum(13) + itemNum(125) + itemNum(285), 2);
-        }
-    }
-
-    // 12.7cm連装砲A型改三(戦時改修)+高射装置=295
-    if (num = itemNum(295)) {
-        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS)) {
-            bonusFp += 2 * num;
-            bonusFp += isHaveX('surface') ? 3 : 0;
-            bonusFp += Math.min(itemNum(13) + itemNum(125) + itemNum(285), 2);
-        }
-    }
-
-    // 12.7cm連装砲B型改四(戦時改修)+高射装置=296
-    if (num = itemNum(296)) {
-        if (SHIP_NAME === '敷波改二') {
-            bonusFp += 3 * num;
-        } else if (['綾波型', '暁型', '初春型'].includes(SHIP_CLASS)) {
-            bonusFp += num;
-        } else if (['白露改二', '時雨改二', '夕立改二'].includes(SHIP_NAME)) {
-            bonusFp += 2 * num;
-        } else if (SHIP_CLASS === '白露型') {
-            bonusFp += num;
-        }
-        if (['綾波型', '暁型', '初春型'].includes(SHIP_CLASS)) {
-            bonusFp += isHaveX('surface') ? 1 : 0;
-            bonusFp += Math.min(itemNum(125) + itemNum(285), 1);
-        } else if (SHIP_CLASS === '白露型') {
-            bonusFp += isHaveX('surface') ? 1 : 0;
-            bonusFp += Math.min(itemNum(15) + itemNum(286), 1);
-        }
-    }
-
-    // 61cm三連装(酸素)魚雷後期型=285
-    if (num = itemNum(285)) {
-        let countRfMax = 0;
-        rfs = itemRfs(285);
-        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS) && /(改二)|(Верный)/.test(SHIP_NAME)) {
-            for (let i = 0; i < rfs.length; i++) {
-                if (rfs[i] >= 10) {
-                    countRfMax++;
-                }
-            }
-            bonusFp += Math.min(countRfMax, 2);
-        }
-    }
-
     // 20.3cm(3号)連装砲=50
     if (num = itemNum(50)) {
-        if (['古鷹型', '青葉型'].includes(SHIP_CLASS)) {
+        if (/最上改二/.test(SHIP_NAME)) {
+            const limitBonus = [0, 3, 8, 12, 16, 20];
+            bonusFp += limitBonus[num];
+            bonusFp += isHaveX('surface') ? 4 : 0;
+            bonusFp += itemNum(30) ? 1 : 0; // 21号対空電探
+            bonusFp += itemNum(410) ? 3 : 0; // 21号対空電探改二
+        } else if (['古鷹型', '青葉型'].includes(SHIP_CLASS)) {
             bonusFp += num;
-            bonusFp += isHaveX('surface') ? 1 : 0;
+            if (!itemNum(90)) { // 20.3cm(2号)連装砲
+                bonusFp += isHaveX('surface') ? 1 : 0;
+            }
         } else if (['妙高型', '高雄型'].includes(SHIP_CLASS)) {
             bonusFp += 2 * num;
             bonusFp += isHaveX('surface') ? 3 : 0;
@@ -1167,7 +1233,7 @@ function getBonusFp(ship) {
             const limitBonus = [0, 2, 6, 9, 12];
             bonusFp += limitBonus[num];
             bonusFp += isHaveX('surface') ? 3 : 0;
-        }        
+        }
     }
 
     // カ号観測機=69
@@ -1177,190 +1243,16 @@ function getBonusFp(ship) {
         }
     }
 
-    // オ号観測機改=324
-    // オ号観測機改二=325
-    if (num = itemNum(324) + itemNum(325)) {
-        if (SHIP_NAME === '伊勢改二') {
-            bonusFp += num;
-        } else if (['日向改二', '加賀改二護'].includes(SHIP_NAME)) {
-            bonusFp += 2 * num;
-        }
-    }
-
-    // S-51J=326
-    if (num = itemNum(326)) {
-        if (SHIP_NAME === '伊勢改二') {
-            bonusFp += num;
-        } else if (['日向改二', '加賀改二護'].includes(SHIP_NAME)) {
-            bonusFp += 3 * num;
-        }
-    }
-
-    // S-51J改=327
-    if (num = itemNum(327)) {
-        if (SHIP_NAME === '伊勢改二') {
-            bonusFp += 2 * num;
-        } else if (SHIP_NAME === '日向改二') {
-            bonusFp += 4 * num;
-        } else if (SHIP_NAME === '加賀改二護') {
-            bonusFp += 5 * num;
-        }
-    }
-
-    // TBM-3W+3S=389
-    if (num = itemNum(389)) {
-        if (US_SHIPS.CV.includes(SHIP_YOMI) || /赤城改二/.test(SHIP_NAME)) {
-            bonusFp += 2 * num;
-        } else if (SHIP_NAME === '加賀改二護') {
-            bonusFp += 4 * num;
-            if (itemNum(326) + itemNum(327)) {
-                bonusFp += 8;
-            } else if (itemNum(69) + itemNum(324) + itemNum(325)) {
-                bonusFp += 3;
-            }
-        } else if (/加賀改二/.test(SHIP_NAME)) {
-            bonusFp += 3 * num;
-        }
-    }
-
-    // 10cm連装高角砲+高射装置=122
-    if (itemNum(122)) {
-        let countRf4 = 0;
-        rfs = itemRfs(122);
-        if (SHIP_NAME === '雪風改二') {
-            for (let i = 0; i < rfs.length; i++) {
-                countRf4 += rfs[i] >= 4 ? 1 : 0;
-            }
-            if (countRf4) {
-                bonusFp += 5 * countRf4;
-                bonusFp += isHaveX('surface') ? 4 : 0;
-            }
-        }
-    }
-
-    // 12.7cm単装高角砲(後期型)=229
-    if (num = itemNum(229)) {
-        let countRf7 = 0;
-        rfs = itemRfs(229);
-        for (let i = 0; i < rfs.length; i++) {
-            countRf7 += rfs[i] >= 7 ? 1 : 0;
-        }
-        if (/夕張改二/.test(SHIP_NAME)) {
-            bonusFp += num;
-            bonusFp += isHaveX('surface') ? 1 : 0;
-        } else if (SHIP_NAME === '雪風改二') {
-            bonusFp += 2 * num;
-            bonusFp += isHaveX('surface') ? 2 : 0;
-        } else if (SHIP_TYPE === '海防艦') {
-            bonusFp += countRf7;
-            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 1 : 0;
-        } else if (['神風型', '睦月型'].includes(SHIP_CLASS)) {
-            bonusFp += countRf7;
-            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 2 : 0;
-        } else if (['ゆら', 'きぬ', 'なか'].includes(SHIP_YOMI)) {
-            bonusFp += 2 * countRf7;
-        }
-        if (['由良改二', '鬼怒改二', '那珂改二'].includes(SHIP_NAME)) {
-            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 3 : 0;
-        }
-    }
-
     // 探照灯=74
     if (num = itemNum(74)) {
         if (SHIP_YOMI === 'ゆきかぜ') {
             bonusFp += num;
         } else if (SHIP_YOMI === 'あきぐも') {
             bonusFp += 2 * num;
-        } else if (['ひえい', 'きりしま', 'ちょうかい', 'あかつき'].includes(SHIP_YOMI) || SHIP_NAME === '能代改二') {
+        } else if (['ひえい', 'きりしま', 'ちょうかい', 'あかつき'].includes(SHIP_YOMI) || (SHIP_CLASS === '阿賀野型' && /改二/.test(SHIP_NAME))) {
             bonusFp += 4;
         } else if (SHIP_YOMI === 'じんつう') {
             bonusFp += 8;
-        }
-    }
-
-    // 12.7cm連装砲D型改二=267
-    if (num = itemNum(267)) {
-        if (SHIP_NAME === '秋雲改二') {
-            bonusFp += 3 * num;
-            bonusFp += isHaveX('surface') ? 3 : 0;
-            bonusFp += itemNum(74) ? 3 : 0;
-            bonusFp += itemNum(129) ? 2 : 0;
-        }
-        if (SHIP_CLASS === '夕雲型') {
-            if (/改二/.test(SHIP_NAME)){
-                bonusFp += 3 * num;
-                bonusFp += isHaveX('surface') ? 3 : 0;
-            } else {
-                bonusFp += 2 * num;
-                bonusFp += isHaveX('surface') ? 2 : 0;
-            }
-        } else if (SHIP_YOMI === 'しまかぜ') {
-            bonusFp += 2 * num;
-            bonusFp += isHaveX('surface') && /改/.test(SHIP_NAME) ? 1 : 0;
-        } else if (SHIP_CLASS === '陽炎型') {
-            if (/改二/.test(SHIP_NAME)) {
-                const limitBonus = [0, 2, 3, 4, 5];
-                bonusFp += limitBonus[num];
-            } else {
-                bonusFp += num;
-            }
-        }
-    }
-
-    // 12.7cm連装砲C型改二=266
-    if (num = itemNum(266)) {
-        if (['白露型', '朝潮型'].includes(SHIP_CLASS)) {
-            bonusFp += num;
-            bonusFp += isHaveX('surface') ? 1 : 0;
-        } else if (SHIP_CLASS === '陽炎型') {
-            if (/改二/.test(SHIP_NAME) && SHIP_NAME != '秋雲改二') {
-                const limitBonus = [0, 2, 5, 6, 7];
-                bonusFp += limitBonus[num];
-            } else {
-                bonusFp += num;
-            }
-            bonusFp += isHaveX('surface') ? 2 : 0;
-        }
-    }
-
-    // 12.7cm連装砲D型改三=366
-    if (num = itemNum(366)) {
-        if (['秋雲改二', '沖波改二'].includes(SHIP_NAME)) {
-            const limitBonus = [0, 4, 7, 10, 13];
-            bonusFp += limitBonus[num];
-            bonusFp += isHaveX('surface') ? 2 : 0;
-            if (SHIP_NAME === '秋雲改二') {
-                bonusFp += itemNum(74) ? 3 : 0;
-                bonusFp += itemNum(129) ? 2 : 0;
-            }
-        } else if (SHIP_CLASS === '夕雲型') {
-            if (/改二/.test(SHIP_NAME)) {
-                bonusFp += 3 * num;
-                bonusFp += isHaveX('surface') ? 2 : 0;
-                bonusFp += isHaveX('air') ? 1 : 0;
-            } else {
-                bonusFp += 2 * num;
-            }
-        } else if (SHIP_YOMI === 'しまかぜ') {
-            bonusFp += 2 * num;
-            if (/改/.test(SHIP_NAME)) {
-                bonusFp += isHaveX('surface') ? 2 : 0;
-                bonusFp += isHaveX('air') ? 1 : 0;
-            }
-        } else if (SHIP_CLASS === '陽炎型') {
-            if (/改二/.test(SHIP_NAME)) {
-                const limitBonus = [0, 2, 4, 5, 6];
-                bonusFp += limitBonus[num];
-            } else {
-                bonusFp += num;
-            }
-        }
-    }
-
-    // 熟練見張員=129
-    if (num = itemNum(129)) {
-        if (isIn(SHIP_CLASS, [JP_SHIPS.AC, JP_SHIPS.CL, JP_SHIPS.DD])) {
-            bonusFp += num;
         }
     }
 
@@ -1403,6 +1295,30 @@ function getBonusFp(ship) {
         }
     }
 
+    // 10cm連装高角砲+高射装置=122
+    if (num = itemNum(122)) {
+        let countRf4 = 0;
+        rfs = itemRfs(122);
+        if (SHIP_CLASS === '秋月型') {
+            bonusFp += num;
+        } else if (SHIP_NAME === '雪風改二') {
+            for (let i = 0; i < rfs.length; i++) {
+                countRf4 += rfs[i] >= 4 ? 1 : 0;
+            }
+            if (countRf4) {
+                bonusFp += 5 * countRf4;
+                bonusFp += isHaveX('surface') ? 4 : 0;
+            }
+        }
+    }
+
+    // 熟練見張員=129
+    if (num = itemNum(129)) {
+        if (isIn(SHIP_CLASS, [JP_SHIPS.AC, JP_SHIPS.CL, JP_SHIPS.DD])) {
+            bonusFp += num;
+        }
+    }
+
     // 96式150cm探照灯=140
     if (itemNum(140)) {
         if (SHIP_NAME === '比叡改二丙') {
@@ -1413,7 +1329,7 @@ function getBonusFp(ship) {
             bonusFp += 6;
         }
     }
-
+    
     // 53cm連装魚雷=174
     if (num = itemNum(174)) {
         if (SHIP_NAME === '由良改二' || /夕張改二/.test(SHIP_NAME)) {
@@ -1421,18 +1337,101 @@ function getBonusFp(ship) {
         }
     }
 
-    // 12cm単装砲改二=293
-    if (num = itemNum(293)) {
-        if (['占守型', '択捉型'].includes(SHIP_CLASS)) {
+    // 12.7cm単装高角砲(後期型)=229
+    if (num = itemNum(229)) {
+        let countRf7 = 0;
+        rfs = itemRfs(229);
+        for (let i = 0; i < rfs.length; i++) {
+            countRf7 += rfs[i] >= 7 ? 1 : 0;
+        }
+        if (/夕張改二/.test(SHIP_NAME)) {
             bonusFp += num;
-            bonusFp += isHaveX('surface') ? 2 : 0;
-        } else if (['神風型', '睦月型'].includes(SHIP_CLASS)) {
+            bonusFp += isHaveX('surface') ? 1 : 0;
+        } else if (SHIP_NAME === '雪風改二') {
             bonusFp += 2 * num;
             bonusFp += isHaveX('surface') ? 2 : 0;
-            if (itemNum(174) === 1) { // 53cm連装魚雷=174
-                bonusFp += 2;
-            } else if (itemNum(174) >= 2) {
-                bonusFp += 3;
+        } else if (SHIP_TYPE === '海防艦') {
+            bonusFp += countRf7;
+            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 1 : 0;
+        } else if (['神風型', '睦月型'].includes(SHIP_CLASS)) {
+            bonusFp += countRf7;
+            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 2 : 0;
+        } else if (['ゆら', 'きぬ', 'なか'].includes(SHIP_YOMI)) {
+            bonusFp += 2 * countRf7;
+        }
+        if (['由良改二', '鬼怒改二', '那珂改二'].includes(SHIP_NAME)) {
+            bonusFp += isHaveX('surface') && countRf7 >= 1 ? 3 : 0;
+        }
+    } 
+
+    // 15.5cm三連装砲改=235
+    if (num = itemNum(235)) {
+        if (SHIP_CLASS === '最上型') {
+            bonusFp += num;
+        } else if (SHIP_YOMI === 'おおよど') {
+            if (/改/.test(SHIP_NAME)) {
+                bonusFp += 2 * num;
+            } else {
+                bonusFp += num;
+            }
+            bonusFp += isHaveX('surface') ? 3 : 0;
+        }
+    }
+
+    // 瑞雲(六三四空/熟練)=237
+    if (num = itemNum(237)) {
+        if (SHIP_CLASS === '扶桑型' && /改/.test(SHIP_NAME)) {
+            bonusFp += 2 * num;
+        } else if (SHIP_CLASS === '伊勢型') {
+            if (/改$/.test(SHIP_NAME)) {
+                bonusFp += 3 * num;
+            } else if (/改二/.test(SHIP_NAME)) {
+                bonusFp += 4 * num;
+            }
+        }
+    }
+
+    // 12.7cm連装砲C型改二=266
+    if (num = itemNum(266)) {
+        if (['白露型', '朝潮型'].includes(SHIP_CLASS)) {
+            bonusFp += num;
+            bonusFp += isHaveX('surface') ? 1 : 0;
+        } else if (SHIP_CLASS === '陽炎型') {
+            if (/改二/.test(SHIP_NAME) && SHIP_NAME != '秋雲改二') {
+                const limitBonus = [0, 2, 5, 6, 7];
+                bonusFp += limitBonus[num];
+            } else {
+                bonusFp += num;
+            }
+            bonusFp += isHaveX('surface') ? 2 : 0;
+        }
+    }
+
+    // 12.7cm連装砲D型改二=267
+    if (num = itemNum(267)) {
+        if (SHIP_NAME === '秋雲改二') {
+            bonusFp += 3 * num;
+            bonusFp += isHaveX('surface') ? 3 : 0;
+            bonusFp += itemNum(74) ? 3 : 0;
+            bonusFp += itemNum(129) ? 2 : 0;
+        }
+        if (SHIP_CLASS === '夕雲型') {
+            if (/改二/.test(SHIP_NAME)){
+                bonusFp += 3 * num;
+                bonusFp += isHaveX('surface') ? 3 : 0;
+            } else {
+                bonusFp += 2 * num;
+                bonusFp += isHaveX('surface') ? 2 : 0;
+            }
+        } else if (SHIP_YOMI === 'しまかぜ') {
+            bonusFp += 2 * num;
+            bonusFp += isHaveX('surface') && /改/.test(SHIP_NAME) ? 1 : 0;
+        } else if (SHIP_CLASS === '陽炎型') {
+            if (/改二/.test(SHIP_NAME)) {
+                const limitBonus = [0, 2, 3, 4, 5];
+                bonusFp += limitBonus[num];
+            } else {
+                bonusFp += num;
             }
         }
     }
@@ -1443,12 +1442,27 @@ function getBonusFp(ship) {
             bonusFp += 2 * num;
         }
     }
+    
+    // 61cm三連装(酸素)魚雷後期型=285
+    if (num = itemNum(285)) {
+        let countRfMax = 0;
+        rfs = itemRfs(285);
+        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS) && /(改二)|(Верный)/.test(SHIP_NAME)) {
+            for (let i = 0; i < rfs.length; i++) {
+                if (rfs[i] >= 10) {
+                    countRfMax++;
+                }
+            }
+            bonusFp += Math.min(countRfMax, 2);
+        }
+    }
 
-    // 533mm 三連装魚雷(53-39型)=400
-    if (num = itemNum(400)) {
-        if (SHIP_YOMI ==='タシュケント' || SHIP_NAME === 'Верный') {
+    // 8cm高角砲改+増設機銃=220
+    if (num = itemNum(220)) {
+        if (SHIP_CLASS === '阿賀野型' && /改二/.test(SHIP_NAME)) {
             bonusFp += num;
-            bonusFp += itemNum(282) ? 2 : 0; // 130mm B-13連装砲=282
+        } else if (/最上改二/.test(SHIP_NAME)) {
+            bonusFp += 2 * num;
         }
     }
 
@@ -1488,19 +1502,57 @@ function getBonusFp(ship) {
         }
     }
 
-    // 41cm連装砲改二318
-    if (num = itemNum(318)) {
-        if (['扶桑改二', '山城改二'].includes(SHIP_NAME)) {
+    // 12cm単装砲改二=293
+    if (num = itemNum(293)) {
+        if (['占守型', '択捉型'].includes(SHIP_CLASS)) {
             bonusFp += num;
-        } else if (['伊勢改', '伊勢改二', '日向'].includes(SHIP_NAME)) {
+            bonusFp += isHaveX('surface') ? 2 : 0;
+        } else if (['神風型', '睦月型'].includes(SHIP_CLASS)) {
             bonusFp += 2 * num;
-        } else if (SHIP_NAME === '日向改二') {
+            bonusFp += isHaveX('surface') ? 2 : 0;
+            if (itemNum(174) === 1) { // 53cm連装魚雷=174
+                bonusFp += 2;
+            } else if (itemNum(174) >= 2) {
+                bonusFp += 3;
+            }
+        }
+    }
+
+    // 12.7cm連装砲A型改二=294
+    if (num = itemNum(294)) {
+        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS)) {
+            bonusFp += num;
+            bonusFp += isHaveX('surface') ? 3 : 0;          
+            bonusFp += Math.min(itemNum(13) + itemNum(125) + itemNum(285), 2);
+        }
+    }
+
+    // 12.7cm連装砲A型改三(戦時改修)+高射装置=295
+    if (num = itemNum(295)) {
+        if (['吹雪型', '綾波型', '暁型'].includes(SHIP_CLASS)) {
+            bonusFp += 2 * num;
+            bonusFp += isHaveX('surface') ? 3 : 0;
+            bonusFp += Math.min(itemNum(13) + itemNum(125) + itemNum(285), 2);
+        }
+    }
+
+    // 12.7cm連装砲B型改四(戦時改修)+高射装置=296
+    if (num = itemNum(296)) {
+        if (SHIP_NAME === '敷波改二') {
             bonusFp += 3 * num;
-            bonusFp += itemNum(290) ? 1 : 0; // 41cm三連装砲改二=290
-            // bonusFp += isHaveX('air') ? 1 : 0;
-        } else if (['長門改二', '陸奥改二'].includes(SHIP_NAME)) {
-            bonusFp += 3 * num;
-            bonusFp += itemNum(290) ? 2 : 0; // 41cm三連装砲改二=290
+        } else if (['綾波型', '暁型', '初春型'].includes(SHIP_CLASS)) {
+            bonusFp += num;
+        } else if (['白露改二', '時雨改二', '夕立改二'].includes(SHIP_NAME)) {
+            bonusFp += 2 * num;
+        } else if (SHIP_CLASS === '白露型') {
+            bonusFp += num;
+        }
+        if (['綾波型', '暁型', '初春型'].includes(SHIP_CLASS)) {
+            bonusFp += isHaveX('surface') ? 1 : 0;
+            bonusFp += Math.min(itemNum(125) + itemNum(285), 1);
+        } else if (SHIP_CLASS === '白露型') {
+            bonusFp += isHaveX('surface') ? 1 : 0;
+            bonusFp += Math.min(itemNum(15) + itemNum(286), 1);
         }
     }
 
@@ -1520,6 +1572,100 @@ function getBonusFp(ship) {
             bonusFp += 2 * num;
         } else if (SHIP_YOMI === 'にっしん') {
             bonusFp += 3 * num;
+        }
+    }
+
+    // 41cm連装砲改二318
+    if (num = itemNum(318)) {
+        if (['扶桑改二', '山城改二'].includes(SHIP_NAME)) {
+            bonusFp += num;
+        } else if (['伊勢改', '伊勢改二', '日向'].includes(SHIP_NAME)) {
+            bonusFp += 2 * num;
+        } else if (SHIP_NAME === '日向改二') {
+            bonusFp += 3 * num;
+            bonusFp += itemNum(290) ? 1 : 0; // 41cm三連装砲改二=290
+            // bonusFp += isHaveX('air') ? 1 : 0;
+        } else if (['長門改二', '陸奥改二'].includes(SHIP_NAME)) {
+            bonusFp += 3 * num;
+            bonusFp += itemNum(290) ? 2 : 0; // 41cm三連装砲改二=290
+        }
+    }
+
+    // 瑞雲改二(六三四空)=322
+    if (num = itemNum(322)) {
+        if (['伊勢改二', '日向改二'].includes(SHIP_NAME)) {
+            bonusFp += 5 * num;
+        }
+    }
+
+    // 瑞雲改二(六三四空/熟練)=323
+    if (num = itemNum(323)) {
+        if (['伊勢改二', '日向改二'].includes(SHIP_NAME)) {
+            bonusFp += 6 * num;
+        }
+    }
+
+    // オ号観測機改=324
+    // オ号観測機改二=325
+    if (num = itemNum(324) + itemNum(325)) {
+        if (SHIP_NAME === '伊勢改二') {
+            bonusFp += num;
+        } else if (['日向改二', '加賀改二護'].includes(SHIP_NAME)) {
+            bonusFp += 2 * num;
+        }
+    }
+
+    // S-51J=326
+    if (num = itemNum(326)) {
+        if (SHIP_NAME === '伊勢改二') {
+            bonusFp += num;
+        } else if (['日向改二', '加賀改二護'].includes(SHIP_NAME)) {
+            bonusFp += 3 * num;
+        }
+    }
+
+    // S-51J改=327
+    if (num = itemNum(327)) {
+        if (SHIP_NAME === '伊勢改二') {
+            bonusFp += 2 * num;
+        } else if (SHIP_NAME === '日向改二') {
+            bonusFp += 4 * num;
+        } else if (SHIP_NAME === '加賀改二護') {
+            bonusFp += 5 * num;
+        }
+    }
+
+    // 12.7cm連装砲D型改三=366
+    if (num = itemNum(366)) {
+        if (['秋雲改二', '沖波改二'].includes(SHIP_NAME)) {
+            const limitBonus = [0, 4, 7, 10, 13];
+            bonusFp += limitBonus[num];
+            bonusFp += isHaveX('surface') ? 2 : 0;
+            if (SHIP_NAME === '秋雲改二') {
+                bonusFp += itemNum(74) ? 3 : 0;
+                bonusFp += itemNum(129) ? 2 : 0;
+            }
+        } else if (SHIP_CLASS === '夕雲型') {
+            if (/改二/.test(SHIP_NAME)) {
+                bonusFp += 3 * num;
+                bonusFp += isHaveX('surface') ? 2 : 0;
+                bonusFp += isHaveX('air') ? 1 : 0;
+            } else {
+                bonusFp += 2 * num;
+            }
+        } else if (SHIP_YOMI === 'しまかぜ') {
+            bonusFp += 2 * num;
+            if (/改/.test(SHIP_NAME)) {
+                bonusFp += isHaveX('surface') ? 2 : 0;
+                bonusFp += isHaveX('air') ? 1 : 0;
+            }
+        } else if (SHIP_CLASS === '陽炎型') {
+            if (/改二/.test(SHIP_NAME)) {
+                const limitBonus = [0, 2, 4, 5, 6];
+                bonusFp += limitBonus[num];
+            } else {
+                bonusFp += num;
+            }
         }
     }
 
@@ -1577,6 +1723,10 @@ function getBonusFp(ship) {
             const limitBonus = [0, 3, 4, 5, 6];
             bonusFp += limitBonus[num];
             bonusFp += isHaveX('surface') ? 4 : 0;
+        } else if (['曙改二', '潮改二'].includes(SHIP_NAME)) {
+            const limitBonus = [0, 3, 5, 7, 9];
+            bonusFp += limitBonus[num];
+            bonusFp += isHaveX('AAA') ? 1 : 0;
         } else if (['練習巡洋艦', '水上機母艦'].includes(SHIP_TYPE)) {
             bonusFp += num;
             bonusFp += isHaveX('surface') ? 2 : 0;
@@ -1595,6 +1745,22 @@ function getBonusFp(ship) {
             bonusFp += isHaveX('surface') ? 1 : 0;
         } else if (SHIP_TYPE === '海防艦' || SHIP_NAME === '雪風改二') {
             bonusFp += isHaveX('surface') ? 2 : 0;
+        }
+    }
+
+    // TBM-3W+3S=389
+    if (num = itemNum(389)) {
+        if (US_SHIPS.CV.includes(SHIP_YOMI) || /赤城改二/.test(SHIP_NAME)) {
+            bonusFp += 2 * num;
+        } else if (SHIP_NAME === '加賀改二護') {
+            bonusFp += 4 * num;
+            if (itemNum(326) + itemNum(327)) {
+                bonusFp += 8;
+            } else if (itemNum(69) + itemNum(324) + itemNum(325)) {
+                bonusFp += 3;
+            }
+        } else if (/加賀改二/.test(SHIP_NAME)) {
+            bonusFp += 3 * num;
         }
     }
 
@@ -1642,9 +1808,17 @@ function getBonusFp(ship) {
 
     // 15.2cm連装砲改二=407
     if (num = itemNum(407)) {
-        if (SHIP_NAME === '能代改二') {
+        if (['能代改二', '矢矧改二'].includes(SHIP_NAME)) {
             bonusFp += 4 * num;
             bonusFp += isHaveX('surface') ? 2 : 0;
+        }
+    }
+
+    // 533mm 三連装魚雷(53-39型)=400
+    if (num = itemNum(400)) {
+        if (SHIP_YOMI ==='タシュケント' || SHIP_NAME === 'Верный') {
+            bonusFp += num;
+            bonusFp += itemNum(282) ? 2 : 0; // 130mm B-13連装砲=282
         }
     }
 
