@@ -1171,6 +1171,46 @@ function getBonusFp(ship) {
         }
     }
 
+    // 水雷戦隊 熟練見張員=412
+    /* 未詳 */
+    if (num = itemNum(412)) {
+        rfs = itemRfs(412);
+        if (SHIP_TYPE === '重巡洋艦') {
+            for (let i = 0; i < rfs.length; i++) {
+                if (1 <= rfs[i] && rfs[i] <= 3) {
+                    bonusFp += 1;
+                } else if (4 <= rfs[i] && rfs[i] <= 7) {
+                    bonusFp += 1;
+                } else if (rfs[i] >= 8) {
+                    bonusFp += 1;
+                }
+            }
+        } else if (SHIP_TYPE === '軽巡洋艦') {
+            for (let i = 0; i < rfs.length; i++) {
+                if (1 <= rfs[i] && rfs[i] <= 3) {
+                    bonusFp += 4;
+                } else if (4 <= rfs[i] && rfs[i] <= 7) {
+                    bonusFp += 4;
+                } else if (rfs[i] >= 8) {
+                    bonusFp += 4;
+                }
+            }
+        } else if (SHIP_TYPE === '駆逐艦') {
+            for (let i = 0; i < rfs.length; i++) {
+                if (1 <= rfs[i] && rfs[i] <= 3) {
+                    bonusFp += 3;
+                } else if (4 <= rfs[i] && rfs[i] <= 7) {
+                    bonusFp += 3;
+                } else if (rfs[i] >= 8) {
+                    bonusFp += 3;
+                }
+            }
+        }
+    }
+
+    // SOC Seagull=414
+    /* 未詳 */
+
     // 対空電探
     if (isHaveX('air')) {
         if (['沖波改二', '秋雲改二'].includes(SHIP_NAME)) {
