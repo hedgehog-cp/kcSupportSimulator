@@ -1188,7 +1188,7 @@ function getBonusFp(ship) {
         } else if (SHIP_TYPE === '軽巡洋艦') {
             for (let i = 0; i < rfs.length; i++) {
                 if (1 <= rfs[i] && rfs[i] <= 3) {
-                    bonusFp += 4;
+                    bonusFp += 3;
                 } else if (4 <= rfs[i] && rfs[i] <= 7) {
                     bonusFp += 4;
                 } else if (rfs[i] >= 8) {
@@ -1198,7 +1198,7 @@ function getBonusFp(ship) {
         } else if (SHIP_TYPE === '駆逐艦') {
             for (let i = 0; i < rfs.length; i++) {
                 if (1 <= rfs[i] && rfs[i] <= 3) {
-                    bonusFp += 3;
+                    bonusFp += 2;
                 } else if (4 <= rfs[i] && rfs[i] <= 7) {
                     bonusFp += 3;
                 } else if (rfs[i] >= 8) {
