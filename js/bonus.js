@@ -1187,16 +1187,18 @@ function getBonusFp(ship) {
     }
 
     // 精鋭水雷戦隊 司令部=413
-    if (SHIP_NAME === '神通改二') {
-        bonusFp += 8;
-    } else if (SHIP_NAME === '長波改二' || ['せんだい', 'じんつう'].includes(SHIP_YOMI)) {
-        bonusFp += 6;
-    } else if (['てるづき', 'なか'].includes(SHIP_YOMI) || ['球磨型', '長良型', '阿賀野型', '大淀型'].includes(SHIP_CLASS)) {
-        bonusFp += 5;
-    } else if (['夕雲型', '秋月型', '天龍型', '夕張型', '香取型'].includes(SHIP_CLASS)) {
-        bonusFp += 4;
-    } else if (SHIP_CLASS === '白露型' || ['霞改二', '不知火改二', '雪風改二'].includes(SHIP_NAME)) {
-        bonusFp += 2;
+    if (itemNum(413)) {
+        if (SHIP_NAME === '神通改二') {
+            bonusFp += 8;
+        } else if (SHIP_NAME === '長波改二' || ['せんだい', 'じんつう'].includes(SHIP_YOMI)) {
+            bonusFp += 6;
+        } else if (['てるづき', 'なか'].includes(SHIP_YOMI) || ['球磨型', '長良型', '阿賀野型', '大淀型'].includes(SHIP_CLASS)) {
+            bonusFp += 5;
+        } else if (['夕雲型', '秋月型', '天龍型', '夕張型', '香取型'].includes(SHIP_CLASS)) {
+            bonusFp += 4;
+        } else if (SHIP_CLASS === '白露型' || ['霞改二', '不知火改二', '雪風改二'].includes(SHIP_NAME)) {
+            bonusFp += 2;
+        }
     }
 
     // SOC Seagull=414
@@ -1211,9 +1213,12 @@ function getBonusFp(ship) {
     }
 
     // SO3C Seamew改=415
-    if (isIn(SHIP_YOMI, [US_SHIPS.AC, US_SHIPS.CL])) {
-        bonusFp += 1;
+    if (itemNum(415)) {
+        if (isIn(SHIP_YOMI, [US_SHIPS.AC, US_SHIPS.CL])) {
+            bonusFp += 1;
+        }
     }
+    
 
     // SBD-5=419
     if (num = itemNum(419)) {
@@ -1234,7 +1239,6 @@ function getBonusFp(ship) {
     // SB2C-3=420
     
     if (num = itemNum(420)) {
-        
         rfs = itemRfs(420);
         for (let i = 0; i < rfs.length; i++) {
             if (rfs[i] <= 2) {
@@ -1364,6 +1368,13 @@ function getBonusFp(ship) {
         } else if (SHIP_YOMI === 'じんつう') {
             bonusFp += 8;
         }
+
+        // 秋雲改二のシナジー
+        // 秋雲改二かつ(D改二またはD改三)かつ探照灯によるシナジー加算のみ記述
+        if (SHIP_NAME === '秋雲改二') {
+            // D改二, D改三
+            bonusFp += itemNum(267) + itemNum(366) ? 3 : 0;
+        }
     }
 
     // 12.7cm単装砲=78
@@ -1426,6 +1437,13 @@ function getBonusFp(ship) {
     if (num = itemNum(129)) {
         if (isIn(SHIP_CLASS, [JP_SHIPS.AC, JP_SHIPS.CL, JP_SHIPS.DD])) {
             bonusFp += num;
+        }
+
+        // 秋雲改二のシナジー
+        // 秋雲改二かつ(D改二またはD改三)かつ熟練見張員によるシナジー加算のみ記述
+        if (SHIP_NAME === '秋雲改二') {
+            // D改二, D改三
+            bonusFp += itemNum(267) + itemNum(366) ? 2 : 0;
         }
     }
 
@@ -1542,19 +1560,6 @@ function getBonusFp(ship) {
             } else if (SHIP_NAME === '島風改') {
                 bonusFp += 1;
             }
-        }
-
-        // 秋雲改二のシナジー
-        // 秋雲改二かつD改二かつ当装備によるシナジー加算のみ記述
-        if (SHIP_NAME === '秋雲改二') {
-            // 探照灯=74
-            bonusFp += itemNum(74) ? 3 : 0;
-
-            // 熟練見張員=129
-            bonusFp += itemNum(129) ? 2 : 0;
-
-            // 水雷戦隊 熟練見張員=412
-            bonusFp += itemNum(412) ? 2 : 0;
         }
     }
 
@@ -1791,19 +1796,6 @@ function getBonusFp(ship) {
                 bonusFp += 1;
             }
         }
-
-        // 秋雲改二のシナジー
-        // 秋雲改二かつD改三かつ当装備によるシナジー加算のみ記述
-        if (SHIP_NAME === '秋雲改二') {
-            // 探照灯=74
-            bonusFp += itemNum(74) ? 3 : 0;
-
-            // 熟練見張員=129
-            bonusFp += itemNum(129) ? 2 : 0;
-
-            // 水雷戦隊 熟練見張員=412
-            bonusFp += itemNum(412) ? 2 : 0;
-        }
     }
 
     // 12.7cm単装高角砲改二=379
@@ -1974,7 +1966,12 @@ function getBonusFp(ship) {
             bonusFp += rfMax >= 4 ? 1 : 0;
         }
 
-        // 秋雲改二かつ(D改二またはD改三)かつ水雷戦隊 熟練見張員のシナジーD改二とD改三に個別に記述
+        // 秋雲改二のシナジー
+        // 秋雲改二かつ(D改二またはD改三)かつ水雷戦隊 熟練見張員によるシナジー加算のみ記述
+        if (SHIP_NAME === '秋雲改二') {
+            // D改二, D改三
+            bonusFp += itemNum(267) + itemNum(366) ? 2 : 0;
+        }
     }
 
     console.log(`bonus: ${bonusFp}: ${ship.shipName}`);
