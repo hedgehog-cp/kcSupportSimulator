@@ -11,7 +11,7 @@ function getTargetList(fleetLength) {
     if (fleetLength[2] >= 1) {
         // 連合艦隊ならば
         for (let i = 0; i < fleetLength[0]; i++) {
-            if (Math.random() < 0.5) {
+            if (Math.random() < 0.45) {
                 // 主力艦隊が狙われたならば
                 const index = Math.floor(Math.random() * fleetLength[1]);
                 const sn = targetableList[0][index]
